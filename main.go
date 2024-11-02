@@ -4,7 +4,6 @@ import (
     "flag"
 )
 
-
 func main() {
 	urlFile 	:= flag.String("urlfile", "./urls.txt" ,"Text file with URLs to scrape")
 	elementFile	:= flag.String("elemfile", "./elements.txt" ,"The elements you wnt to scrape")
@@ -12,5 +11,5 @@ func main() {
 	flag.Parse()
 
 	// Scrapes the current file
-	parseFile(urlFile,elementFile,jsonFormat)
+	parseFile(urlFile,elementFile, jsonFormat)
 }

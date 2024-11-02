@@ -27,7 +27,7 @@ func parseFile(urls *string, elementFile *string, jsonFormat *bool) {
         line := scanner.Text()
         fmt.Printf("%s[*]%s Current URL to scrape: %s\n", ColorBlue, ColorReset, line)
 
-		scrapeTheWebpage(line,*elementFile)
+		scrapeTheWebpage(line,*elementFile, jsonFormat)
         lineNumber++
 
 		if lineNumber == 5 {

@@ -9,7 +9,38 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-func scrapeTheWebpage(url string, elementsFile string) {
+
+func createJsonFile(url string) *os.File {
+
+
+
+	jsonFile, err := os.Create(fmt.Sprintf("%s.json",url))
+	if err != nil {
+		fmt.Errorf("error opening file: %w", err)
+	}
+	defer jsonFile.Close()
+	return jsonFile
+}
+
+
+
+func appendToJsonFile(filename string, value string) {
+  file, err := os.Open(filename)
+    if err != nil {
+        fmt.Errorf("error opening file: %w", err)
+    }
+    defer file.Close()
+
+    decoder := json.NewDecoder(file)
+    err = decoder.Decode(&value)
+    if err != nil {
+         fmt.Errorf("error decoding JSON data: %w", err)
+    }
+
+}
+
+
+func scrapeTheWebpage(url string, elementsFile string, jsonFormat *bool) {
 	// Send HTTP GET request
 	res, err := http.Get(url)
 	if err != nil {
@@ -37,11 +68,13 @@ func scrapeTheWebpage(url string, elementsFile string) {
 	scanner := bufio.NewScanner(file)
 	lineNumber := 1
 
+	createJsonFile(url) 
 	for scanner.Scan() {
 		line := scanner.Text()
 		fmt.Printf("%s[*]%s Current URL to scrape: %s\n", ColorBlue, ColorReset, line)
 		doc.Find(line).Each(func(i int, s *goquery.Selection) {
-			// TODO: Create make a json file and add to it in j
+
+			// TODO: Create make a JSON file and add to it in j
 			fmt.Println(s.Text())
 		})
 		lineNumber++
@@ -51,13 +84,3 @@ func scrapeTheWebpage(url string, elementsFile string) {
 	}
 }
 
-func createAddJsonFile(data string, filename string) error {
-	jsonFile, err := os.Create(filename)
-	jsonData, err := json.MarshalIndent(data, "", "    ")
-	if err != nil {
-		return fmt.Errorf("error opening file: %w", err)
-	}
-
-	defer jsonFile.Close()
-	os.WriteFile(filename, jsonData, 0644)
-}
