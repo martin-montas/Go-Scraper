@@ -12,8 +12,8 @@ var ColorGreen  string = "\033[32m"
 var ColorBlue   string = "\033[34m"
 var ColorReset  string = "\033[0m"
 
-func parseFile(urls *string, elementFile *string, jsonFormat *bool) {
-    file, err := os.Open(*urls)
+func run(urls string, elementFile string, jsonFormat bool) {
+    file, err := os.Open(urls)
     if err != nil {
         fmt.Println("Error reading file:", err)
         return
@@ -27,7 +27,7 @@ func parseFile(urls *string, elementFile *string, jsonFormat *bool) {
         line := scanner.Text()
         fmt.Printf("%s[*]%s Current URL to scrape: %s\n", ColorBlue, ColorReset, line)
 
-		scrapeTheWebpage(line,*elementFile, jsonFormat)
+		scrapeWebPage(line,elementFile, jsonFormat)
         lineNumber++
 
 		if lineNumber == 5 {

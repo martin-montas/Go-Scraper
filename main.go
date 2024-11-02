@@ -1,7 +1,8 @@
 package main
 
 import (
-    "flag"
+	"flag"
+	"fmt"
 )
 
 func main() {
@@ -10,6 +11,6 @@ func main() {
 	jsonFormat 	:= flag.Bool("json", true, "True if you want to parse json. Default true")
 	flag.Parse()
 
-	// Scrapes the current file
-	parseFile(urlFile,elementFile, jsonFormat)
+	run(*urlFile,*elementFile, *jsonFormat)
+	fmt.Println("Done!")
 }
