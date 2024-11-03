@@ -9,9 +9,47 @@ import (
 	"net/http"
 	"github.com/PuerkitoBio/goquery"
 )
+// The new data you want to append
+//  newData := Element{Element: "Example Domain"}
+//
+//  // Step 1: Open and read the existing JSON file
+//  file, err := ioutil.ReadFile("data.json")
+//  if err != nil {
+//  	fmt.Println("Error reading file:", err)
+//  	return
+//  }
+//
+//  // Step 2: Parse the existing JSON data into a slice
+//  var elements []Element
+//  if len(file) > 0 {
+//  	if err := json.Unmarshal(file, &elements); err != nil {
+//  		fmt.Println("Error unmarshalling JSON:", err)
+//  		return
+//  	}
+//  }
+//
+//  // Step 3: Append the new data to the slice
+//  elements = append(elements, newData)
+//
+//  // Step 4: Write the updated slice back to the JSON file
+//  updatedData, err := json.MarshalIndent(elements, "", "\t")
+//  if err != nil {
+//  	fmt.Println("Error marshalling JSON:", err)
+//  	return
+//  }
+//
+//  err = ioutil.WriteFile("data.json", updatedData, 0644)
+//  if err != nil {
+//  	fmt.Println("Error writing to file:", err)
+//  	return
+//  }
+//
+//  fmt.Println("Data successfully appended to file")
 
-type elementEntry struct {
-	Element  string
+
+
+type Element struct {
+	Element string `json:"Element"`
 }
 
 func saveJSON(fileName string, key interface{}) {
@@ -91,7 +129,14 @@ func scrapreCurrentSite(url string, elementsFile string) {
 		line := scanner.Text()
 		fmt.Printf("%s[*]%s Current URL to scrape: %s\n", ColorBlue, ColorReset, line)
 		doc.Find(line).Each(func(i int, s *goquery.Selection) {
-			// TODO: Create make a json file and add to it in j
+			// TODO: Create make a json file and add to it 
+			formattedelement := fmt.Sprintf(`
+			{
+				"Element": "%s"\n
+			}
+			`,s.Text())
+			saveJSON("elements.json", formattedelement)
+
 			fmt.Println(s.Text())
 		})
 	}
