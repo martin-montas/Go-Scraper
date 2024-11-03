@@ -1,14 +1,16 @@
 package main
+
 import (
 	"bufio"
-	"os"
 	"encoding/json"
 	"fmt"
 	"log"
+	"os"
 	// "time"
-	"net/http"
 	"github.com/PuerkitoBio/goquery"
+	"net/http"
 )
+
 // The new data you want to append
 //  newData := Element{Element: "Example Domain"}
 //
@@ -46,14 +48,12 @@ import (
 //
 //  fmt.Println("Data successfully appended to file")
 
-
-
 type Element struct {
 	Element string `json:"Element"`
 }
 
 func saveJSON(fileName string, key interface{}) {
-	file , err := os.Create(fileName)
+	file, err := os.Create(fileName)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -63,7 +63,7 @@ func saveJSON(fileName string, key interface{}) {
 	file.Close()
 }
 
-func sendRequest(url string) (*http.Response, error){
+func sendRequest(url string) (*http.Response, error) {
 	// Send HTTP GET request
 	res, err := http.Get(url)
 	if err != nil {
@@ -77,7 +77,7 @@ func sendRequest(url string) (*http.Response, error){
 }
 
 func requestToConsole(url string, scanner *bufio.Scanner) {
-	res , err := sendRequest(url)
+	res, err := sendRequest(url)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -112,7 +112,7 @@ func scrapreCurrentSite(url string, elementsFile string) {
 	defer res.Body.Close()
 	if res.StatusCode != 200 {
 		log.Fatalf("%s[!]%s failed to fetch page: %d %s",
-		ColorRed,ColorReset ,res.StatusCode, res.Status)
+			ColorRed, ColorReset, res.StatusCode, res.Status)
 	}
 	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
@@ -129,12 +129,12 @@ func scrapreCurrentSite(url string, elementsFile string) {
 		line := scanner.Text()
 		fmt.Printf("%s[*]%s Current URL to scrape: %s\n", ColorBlue, ColorReset, line)
 		doc.Find(line).Each(func(i int, s *goquery.Selection) {
-			// TODO: Create make a json file and add to it 
+			// TODO: Create make a json file and add to it
 			formattedelement := fmt.Sprintf(`
 			{
 				"Element": "%s"\n
 			}
-			`,s.Text())
+			`, s.Text())
 			saveJSON("elements.json", formattedelement)
 
 			fmt.Println(s.Text())
