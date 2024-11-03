@@ -19,21 +19,15 @@ func run(urls string, elementFile string, jsonFormat bool) {
         return
     }
     defer file.Close()
-
     scanner := bufio.NewScanner(file)
     lineNumber := 1
 
     for scanner.Scan() {
         line := scanner.Text()
         fmt.Printf("%s[*]%s Current URL to scrape: %s\n", ColorBlue, ColorReset, line)
-
 		scrapeWebPage(line,elementFile, jsonFormat)
-        lineNumber++
+		lineNumber++
 
-		if lineNumber == 5 {
-			fmt.Printf("%s[-]%s Too many request may overwelm the server. Exiting..", ColorRed, ColorReset)
-			os.Exit(1)
-		}
     }
     if err := scanner.Err(); err != nil {
         fmt.Println("Error reading file:", err)
