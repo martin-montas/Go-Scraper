@@ -25,7 +25,7 @@ func run(urls string, elementFile string, jsonFormat bool) {
     for scanner.Scan() {
         line := scanner.Text()
         fmt.Printf("%s[*]%s Current URL to scrape: %s\n", ColorBlue, ColorReset, line)
-		scrapeWebPage(line,elementFile, jsonFormat)
+		scrapreCurrentSite(line,elementFile)
 		lineNumber++
 
     }
