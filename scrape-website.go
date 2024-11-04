@@ -5,15 +5,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"os"
-	// "time"
-	"github.com/PuerkitoBio/goquery"
 	"net/http"
+	"os"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
-// The new data you want to append
+//  The new data you want to append
 //  newData := Element{Element: "Example Domain"}
-//
 //  // Step 1: Open and read the existing JSON file
 //  file, err := ioutil.ReadFile("data.json")
 //  if err != nil {
@@ -52,15 +51,31 @@ type Element struct {
 	Element string `json:"Element"`
 }
 
-func saveJSON(fileName string, key interface{}) {
+func saveJSON(element Element) {
 	file, err := os.Create(fileName)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer file.Close()
+
 	encoder := json.NewEncoder(file)
-	err = encoder.Encode(key)
-	file.Close()
+	err = encoder.Encode(element)
+
+	var elements []Element
+	elements = append(elements, element)
+	updatedData, err := json.MarshalIndent(elements, "", "\t")
+	if err != nil {
+		fmt.Println("Error marshalling JSON:", err)
+		return
+	}
+
+	err = os.WriteFile(fileName, updatedData, 0644)
+	if err != nil {
+		fmt.Println("Error writing to file:", err)
+		return
+	}
+
+	fmt.Println("Data successfully appended to file")
 }
 
 func sendRequest(url string) (*http.Response, error) {
@@ -125,22 +140,25 @@ func scrapreCurrentSite(url string, elementsFile string) {
 	}
 	defer file.Close()
 	scanner := bufio.NewScanner(file)
+	var elements []Element
 	for scanner.Scan() {
 		line := scanner.Text()
 		fmt.Printf("%s[*]%s Current URL to scrape: %s\n", ColorBlue, ColorReset, line)
 		doc.Find(line).Each(func(i int, s *goquery.Selection) {
-			// TODO: Create make a json file and add to it
-			formattedelement := fmt.Sprintf(`
-			{
-				"Element": "%s"\n
+			newData := Element{Element: s.Text()}
+			elements = append(elements, newData)
+			updatedData, err := json.MarshalIndent(elements, "", "\t")
+			if err != nil {
+				fmt.Println("Error marshalling JSON:", err)
+				return
 			}
-			`, s.Text())
-			saveJSON("elements.json", formattedelement)
-
-			fmt.Println(s.Text())
+			err = os.WriteFile(fileName, updatedData, 0644)
+			if err != nil {
+				fmt.Println("Error writing to file:", err)
+				return
+			}
+			fmt.Println("Data successfully appended to file")
+		
 		})
-	}
-	if err := scanner.Err(); err != nil {
-		fmt.Println("Error reading file:", err)
 	}
 }
