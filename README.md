@@ -16,9 +16,14 @@ on the command line to be able to use it.
 ## Example
  Here is a simple example:
  ```bash
-    ./ -e elements.txt -u url.txt -json true
+    ./go-scraper -e elements.txt -u url.txt -json 
  ```
  In this case you are passing `elements.txt` and `url.txt` as arguments.
  `elements.txt` is the elements to scrape. `url.txt` is the URLs to scrape.
- `true` means that you want to JSON as the output.
+ `json` means that you want to JSON as the output.
+
+## Help
+ ```bash
+    ./go-scraper --help
+ ```
 

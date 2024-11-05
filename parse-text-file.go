@@ -20,7 +20,7 @@ func run() {
 			ColorBlue, ColorReset, line)
 		if *jsonFormat {
 			scrapeToJSON(line)
-		} 
+		}
 		if !*jsonFormat {
 			scrapeToConsole(line)
 		}

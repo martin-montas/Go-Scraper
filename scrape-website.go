@@ -12,7 +12,7 @@ import (
 )
 
 type Element struct {
-	Tag string `json:"tag"`
+	Tag     string `json:"tag"`
 	Element string `json:"Element"`
 }
 
@@ -114,7 +114,7 @@ func scrapeToJSON(line string) {
 		fmt.Printf("%s[*]%s Current URL to scrape: %s\n", ColorBlue, ColorReset, line)
 		doc.Find(line).Each(func(i int, s *goquery.Selection) {
 			newData := Element{
-				Tag: line,
+				Tag:     line,
 				Element: s.Text(),
 			}
 
