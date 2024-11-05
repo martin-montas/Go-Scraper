@@ -1,4 +1,4 @@
-module Go-scraper
+module go-scraper
 
 go 1.23
 
