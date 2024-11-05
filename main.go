@@ -21,7 +21,7 @@ var jsonFormat *bool
 func main() {
 	urlFile = flag.String("u", "url.txt", "Text file with URLs to scrape.")
 	elementFile = flag.String("e", "elements.txt", "The element text file you want to scrape.")
-	jsonFormat = flag.Bool("json", true, "If you want to parse json.")
+	jsonFormat = flag.Bool("json", false, "If you want to parse json.")
 	flag.Parse()
 
 	run()

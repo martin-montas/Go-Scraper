@@ -17,8 +17,12 @@ func run() {
 	for scanner.Scan() {
 		line := scanner.Text()
 		fmt.Printf("%s[*]%s Current URL to scrape: %s\n",
-		ColorBlue, ColorReset, line)
-		scrapreCurrentSite(line)
+			ColorBlue, ColorReset, line)
+		if *jsonFormat {
+			scrapeToJSON(line)
+		} else {
+			scrapeToConsole(line)
+		}
 	}
 	if err := scanner.Err(); err != nil {
 		fmt.Println("Error reading file:", err)
