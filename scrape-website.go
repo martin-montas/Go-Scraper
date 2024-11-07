@@ -16,54 +16,50 @@ type Element struct {
 	Element string `json:"Element"`
 }
 
-func saveJSON(element Element) {
-	file, err := os.Create(fileName)
-	if err != nil {
-		log.Fatal(err)
+var elements []Element
+func saveToJSON( currentLine string, currentTag *goquery.Selection) {
+	newData := Element{
+		Tag:     currentLine,
+		Element: currentTag.Text(),
 	}
-	defer file.Close()
-	encoder := json.NewEncoder(file)
-	err = encoder.Encode(element)
-	var elements []Element
-	elements = append(elements, element)
+
+	elements = append(elements, newData)
 	updatedData, err := json.MarshalIndent(elements, "", "\t")
 	if err != nil {
 		fmt.Println("Error marshalling JSON:", err)
 		return
 	}
-
 	err = os.WriteFile(fileName, updatedData, 0644)
 	if err != nil {
 		fmt.Println("Error writing to file:", err)
 		return
 	}
-
 }
 
 func sendRequest(url string) (*http.Response, error) {
 	// Send HTTP GET request
-	res, err := http.Get(url)
+	response, err := http.Get(url)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer res.Body.Close()
-	if res.StatusCode != 200 {
-		log.Fatalf("failed to fetch page: %d %s", res.StatusCode, res.Status)
+	defer response.Body.Close()
+	if response.StatusCode != 200 {
+		log.Fatalf("failed to fetch page: %d %s", response.StatusCode, response.Status)
 	}
-	return res, nil
+	return response, nil
 }
 
 func scrapeToConsole(line string) {
-	res, err := http.Get(line)
+	response, err := http.Get(line)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer res.Body.Close()
-	if res.StatusCode != 200 {
+	defer response.Body.Close()
+	if response.StatusCode != 200 {
 		log.Fatalf("%s[!]%s failed to fetch page: %d %s",
-			ColorRed, ColorReset, res.StatusCode, res.Status)
+			ColorRed, ColorReset, response.StatusCode, response.Status)
 	}
-	doc, err := goquery.NewDocumentFromReader(res.Body)
+	doc, err := goquery.NewDocumentFromReader(response.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -87,17 +83,21 @@ func scrapeToConsole(line string) {
 	}
 }
 
-func scrapeToJSON(line string) {
-	res, err := http.Get(line)
+func executeFileRead(scanner *bufio.Scanner, doc *goquery.Document, fileName string) {
+	currentLine := scanner.Text()
+	fmt.Printf("%s[*]%s Current URL to scrape: %s\n", ColorBlue, ColorReset, currentLine)
+	doc.Find(currentLine).Each(func(i int, currentTag *goquery.Selection) {
+		saveToJSON(currentLine, currentTag)
+	})
+}
+
+func scrapeToJSON(currentLine string) {
+	response, err := sendRequest(currentLine)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer res.Body.Close()
-	if res.StatusCode != 200 {
-		log.Fatalf("%s[!]%s failed to fetch page: %d %s",
-			ColorRed, ColorReset, res.StatusCode, res.Status)
-	}
-	doc, err := goquery.NewDocumentFromReader(res.Body)
+
+	doc, err := goquery.NewDocumentFromReader(response.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -108,27 +108,5 @@ func scrapeToJSON(line string) {
 	}
 	defer file.Close()
 	scanner := bufio.NewScanner(file)
-	var elements []Element
-	for scanner.Scan() {
-		line := scanner.Text()
-		fmt.Printf("%s[*]%s Current URL to scrape: %s\n", ColorBlue, ColorReset, line)
-		doc.Find(line).Each(func(i int, s *goquery.Selection) {
-			newData := Element{
-				Tag:     line,
-				Element: s.Text(),
-			}
-
-			elements = append(elements, newData)
-			updatedData, err := json.MarshalIndent(elements, "", "\t")
-			if err != nil {
-				fmt.Println("Error marshalling JSON:", err)
-				return
-			}
-			err = os.WriteFile(fileName, updatedData, 0644)
-			if err != nil {
-				fmt.Println("Error writing to file:", err)
-				return
-			}
-		})
-	}
+	executeFileRead(scanner, doc, fileName)
 }

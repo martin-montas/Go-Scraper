@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func run() {
+func runProgram() {
 	file, err := os.Open(*urlFile)
 	if err != nil {
 		fmt.Println("Error reading file:", err)

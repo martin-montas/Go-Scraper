@@ -24,6 +24,6 @@ func main() {
 	jsonFormat = flag.Bool("json", false, "If you want to parse json.")
 	flag.Parse()
 
-	run()
+	runProgram()
 	fmt.Printf("%s[+]%s Done!\n", ColorGreen, ColorReset)
 }
