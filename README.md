@@ -27,3 +27,8 @@ on the command line to be able to use it.
     ./go-scraper --help
  ```
 
+## considerations
+
+- You should have permissions for scraping any of the websites.
+- I'm not responsible for any misuse of this program.
+
